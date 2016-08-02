@@ -51,8 +51,8 @@ Wireless.prototype.COMMANDS = {
     disable: 'sudo ifconfig :INTERFACE down',
     enable: 'sudo ifconfig :INTERFACE up',
     interfaces: 'sudo iwconfig',
-    dhcp: 'sudo dhcpcd :INTERFACE',
-    dhcp_disable: 'sudo dhcpcd :INTERFACE -k',
+    dhcp: 'sudo dhclient :INTERFACE',
+    dhcp_disable: 'sudo killall dhclient',
     leave: 'sudo iwconfig :INTERFACE essid ""',
 
     metric: 'sudo ifconfig :INTERFACE metric :METRIC',
