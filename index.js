@@ -52,12 +52,12 @@ Wireless.prototype.COMMANDS = {
     enable: 'sudo ifconfig :INTERFACE up',
     interfaces: 'sudo iwconfig',
     dhcp: 'sudo dhclient :INTERFACE',
-    dhcp_disable: 'sudo killall dhclient',
-    leave: 'sudo iwconfig :INTERFACE essid ""',
+    dhcp_disable: 'dhclient -r :INTERFACE; sudo killall dhclient',
+    leave: 'sudo killall wpa_supplicant; sudo iwconfig :INTERFACE essid ""',
 
     metric: 'sudo ifconfig :INTERFACE metric :METRIC',
     connect_wep: 'sudo iwconfig :INTERFACE essid ":ESSID" key :PASSWORD',
-    connect_wpa: "sudo wpa_passphrase ':ESSID' ':PASSWORD' > /tmp/wpa-temp.conf && sudo wpa_supplicant -D nl80211 -i :INTERFACE -c /tmp/wpa-temp.conf && rm /tmp/wpa-temp.conf",
+    connect_wpa: "sudo wpa_passphrase ':ESSID' ':PASSWORD' > /tmp/wpa-temp.conf && sudo wpa_supplicant -B -D nl80211 -i :INTERFACE -c /tmp/wpa-temp.conf && rm /tmp/wpa-temp.conf",
     connect_open: 'sudo iwconfig :INTERFACE essid ":ESSID"',
 };
 
