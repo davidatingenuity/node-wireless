@@ -172,6 +172,7 @@ Wireless.prototype.dhcpStop = function(callback) {
         if (err) {
             self.emit('error', "There was an unknown error disabling dhcp" + err);
             callback && callback(err);
+            return;
         }
 
         callback && callback(null);
@@ -223,6 +224,7 @@ Wireless.prototype.disable = function(callback) {
         if (stdout || stderr) {
             this.emit('error', "There was an error disabling the interface" + stdout + stderr);
             callback && callback(stdout || stderr);
+            return;
         }
 
         callback && callback(null);
