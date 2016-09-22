@@ -46,19 +46,19 @@ var Wireless = function(config) {
 util.inherits(Wireless, EventEmitter);
 
 Wireless.prototype.COMMANDS = {
-    scan: 'sudo iwlist :INTERFACE scan',
-    stat: 'sudo iwconfig :INTERFACE',
+    scan: 'sudo iw dev :INTERFACE scan',
+    stat: 'sudo iw dev :INTERFACE link',
     disable: 'sudo ifconfig :INTERFACE down',
     enable: 'sudo ifconfig :INTERFACE up',
-    interfaces: 'sudo iwconfig',
+    interfaces: 'sudo iw dev',
     dhcp: 'sudo dhclient :INTERFACE',
     dhcp_disable: 'dhclient -r :INTERFACE; sudo killall dhclient',
     leave: 'sudo killall wpa_supplicant; sudo iwconfig :INTERFACE essid ""',
 
     metric: 'sudo ifconfig :INTERFACE metric :METRIC',
-    connect_wep: 'sudo iwconfig :INTERFACE essid ":ESSID" key :PASSWORD',
+    connect_wep: 'sudo iw :INTERFACE connect ":ESSID" keys :PASSWORD',
     connect_wpa: "sudo wpa_passphrase ':ESSID' ':PASSWORD' > /tmp/wpa-temp.conf && sudo wpa_supplicant -B -D nl80211 -i :INTERFACE -c /tmp/wpa-temp.conf && rm /tmp/wpa-temp.conf",
-    connect_open: 'sudo iwconfig :INTERFACE essid ":ESSID"',
+    connect_open: 'sudo iw :INTERFACE connect ":ESSID"',
 };
 
 // Translates strings. Looks for :SOMETHING in string, and replaces is with data.something.
