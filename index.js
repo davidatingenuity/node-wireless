@@ -266,7 +266,7 @@ Wireless.prototype._parseScan = function(scanResults) {
     var networkCount = 0;
 
     _.each(lines, function(line) {
-        line = line.replace(/^\s+|\s+$/g,"");
+        line = line.replace(/\s+$/g,"");
 
         // a "BSS" line means that we've found a start of a new network
         if (line.indexOf('BSS') === 0) {
@@ -282,8 +282,8 @@ Wireless.prototype._parseScan = function(scanResults) {
                 encryption_wpa: false,
                 encryption_wpa2: false,
             };
-
-            network.address = line.match(/([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}/)[0];
+            var m = line.match(/([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}/);
+            if(m.length > 0) network.address = m[0];
         } else if (line.indexOf('DS Parameter set: channel ') === 0) {
             network.channel = line.match(/DS Parameter set: channel ([0-9]{1,2})/)[1];
         } else if (line.indexOf('signal:') === 0) {
