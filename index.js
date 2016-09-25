@@ -277,6 +277,7 @@ Wireless.prototype._parseScan = function(scanResults) {
 
             network = {
                 last_tick: 0,
+                ssid: "unknown",
                 encryption_any: false,
                 encryption_wep: false,
                 encryption_wpa: false,
@@ -284,23 +285,26 @@ Wireless.prototype._parseScan = function(scanResults) {
             };
             var m = line.match(/([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}/);
             if(m.length > 0) network.address = m[0];
-        } else if (line.indexOf('DS Parameter set: channel ') === 0) {
-            network.channel = line.match(/DS Parameter set: channel ([0-9]{1,2})/)[1];
-        } else if (line.indexOf('signal:') === 0) {
-            var sMatch = line.match(/signal: (\d+)[^\d]/);
-            if (sMatch && sMatch.length >= 2) {
-                network.signal = parseInt(sMatch[1], 10);
+        } else {
+            line = line.replace(/^\s+/g,"");
+            if (line.indexOf('DS Parameter set: channel ') === 0) {
+                network.channel = line.match(/DS Parameter set: channel ([0-9]{1,2})/)[1];
+            } else if (line.indexOf('signal:') === 0) {
+                var sMatch = line.match(/signal: (\d+)[^\d]/);
+                if (sMatch && sMatch.length >= 2) {
+                    network.signal = parseInt(sMatch[1], 10);
+                }
+            } else if (line.indexOf('SSID') === 0) {
+                network.ssid = line.match(/SSID: (.*)/)[1];
+            } else if (line.indexOf('RSN:') === 0) {
+                network.encryption_any = true;
+                network.encryption_wep = false;
+                network.encryption_wpa2 = true;
+            } else if (line.indexOf('WPS:') === 0) {
+                network.encryption_any = true;
+                network.encryption_wep = false;
+                network.encryption_wpa = true;
             }
-        } else if (line.indexOf('SSID') === 0) {
-            network.ssid = line.match(/SSID: (.*)/)[1];
-        } else if (line.indexOf('RSN:') === 0) {
-            network.encryption_any = true;
-            network.encryption_wep = false;
-            network.encryption_wpa2 = true;
-        } else if (line.indexOf('WPS:') === 0) {
-            network.encryption_any = true;
-            network.encryption_wep = false;
-            network.encryption_wpa = true;
         }
     });
 
