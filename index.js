@@ -268,15 +268,14 @@ Wireless.prototype._parseScan = function(scanResults) {
     _.each(lines, function(line) {
         line = line.replace(/^\s+|\s+$/g,"");
 
-        // a "Cell" line means that we've found a start of a new network
-        if (line.indexOf('Cell') === 0) {
+        // a "BSS" line means that we've found a start of a new network
+        if (line.indexOf('BSS') === 0) {
             networkCount++;
             if (!_.isEmpty(network)) {
                 networks.push(network);
             }
 
             network = {
-                //speeds: []
                 last_tick: 0,
                 encryption_any: false,
                 encryption_wep: false,
@@ -285,34 +284,21 @@ Wireless.prototype._parseScan = function(scanResults) {
             };
 
             network.address = line.match(/([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}/)[0];
-        } else if (line.indexOf('Channel') === 0) {
-            network.channel = line.match(/Channel:([0-9]{1,2})/)[1];
-        } else if (line.indexOf('Quality') === 0) {
-            // observed versions of this line:
-            //   Quality=100/100  Signal level=47/100
-            //   Quality:23  Signal level:0  Noise level:0
-            var qMatch = line.match(/Quality(:|=)(\d+)[^\d]/),
-                sMatch = line.match(/Signal level(:|=)(-?\d+)[^\d]/);
-            if (qMatch && qMatch.length >= 3) {
-                network.quality = parseInt(qMatch[2], 10);
-            }
+        } else if (line.indexOf('DS Parameter set: channel ') === 0) {
+            network.channel = line.match(/DS Parameter set: channel ([0-9]{1,2})/)[1];
+        } else if (line.indexOf('signal:') === 0) {
+            var sMatch = line.match(/signal(:|=)(\d+)[^\d]/),
             if (sMatch && sMatch.length >= 3) {
-                network.strength = parseInt(sMatch[2], 10);
+                network.signal = parseInt(sMatch[2], 10);
             }
-        } else if (line.indexOf('Encryption key') === 0) {
-            var enc = line.match(/Encryption key:(on|off)/)[1];
-            if (enc === 'on') {
-                network.encryption_any = true;
-                network.encryption_wep = true;
-            }
-        } else if (line.indexOf('ESSID') === 0) {
-            network.ssid = line.match(/ESSID:"(.*)"/)[1];
-        } else if (line.indexOf('Mode') === 0) {
-            network.mode = line.match(/Mode:(.*)/)[1];
-        } else if (line.indexOf('IE: IEEE 802.11i/WPA2 Version 1') === 0) {
+        } else if (line.indexOf('SSID') === 0) {
+            network.ssid = line.match(/SSID:"(.*)"/)[1];
+        } else if (line.indexOf('RSN:') === 0) {
+            network.encryption_any = true;
             network.encryption_wep = false;
             network.encryption_wpa2 = true;
-        } else if (line.indexOf('IE: WPA Version 1') === 0) {
+        } else if (line.indexOf('WPS:') === 0) {
+            network.encryption_any = true;
             network.encryption_wep = false;
             network.encryption_wpa = true;
         }
@@ -398,14 +384,8 @@ Wireless.prototype._executeTrackConnection = function() {
         var networkAddress = null;
 
         _.each(lines, function(line) {
-            /*
-            if (line.match(/inet (\b(?:\d{1,3}\.){3}\d{1,3}\b)/) || line.match(/inet6 ([a-f0-9:]*)/)) {
-                // looks like we're connected
-                foundOutWereConnected = true;
-            }
-            */
-            if (line.indexOf('Access Point') !== -1) {
-                networkAddress = line.match(/Access Point: ([a-fA-F0-9:]*)/)[1] || null;
+            if (line.indexOf('SSID') !== -1) {
+                networkAddress = line.match(/SSID: ([a-fA-F0-9:]*)/)[1] || null;
 
                 if (networkAddress) {
                     foundOutWereConnected = true;
