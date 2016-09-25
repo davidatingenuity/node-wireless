@@ -377,7 +377,7 @@ Wireless.prototype._executeTrackConnection = function() {
 
     exec(this.commands.stat, function(err, stdout, stderr) {
         if (err) {
-            self.emit('error', "Error getting wireless devices information");
+            self.emit('error', "Error getting wireless devices information", err);
             // TODO: Destroy
             return;
         }
@@ -397,7 +397,7 @@ Wireless.prototype._executeTrackConnection = function() {
                 }
             });
         }
-        
+
         // guess we're not connected after all
         if (!foundOutWereConnected && self.connected) {
             self.connected = false;
