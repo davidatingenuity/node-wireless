@@ -292,7 +292,7 @@ Wireless.prototype._parseScan = function(scanResults) {
                 network.signal = parseInt(sMatch[2], 10);
             }
         } else if (line.indexOf('SSID') === 0) {
-            network.ssid = line.match(/SSID:"(.*)"/)[1];
+            network.ssid = line.match(/SSID: (.*)/)[1];
         } else if (line.indexOf('RSN:') === 0) {
             network.encryption_any = true;
             network.encryption_wep = false;
