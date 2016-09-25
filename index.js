@@ -287,9 +287,9 @@ Wireless.prototype._parseScan = function(scanResults) {
         } else if (line.indexOf('DS Parameter set: channel ') === 0) {
             network.channel = line.match(/DS Parameter set: channel ([0-9]{1,2})/)[1];
         } else if (line.indexOf('signal:') === 0) {
-            var sMatch = line.match(/signal(:|=)(\d+)[^\d]/);
-            if (sMatch && sMatch.length >= 3) {
-                network.signal = parseInt(sMatch[2], 10);
+            var sMatch = line.match(/signal: (\d+)[^\d]/);
+            if (sMatch && sMatch.length >= 2) {
+                network.signal = parseInt(sMatch[1], 10);
             }
         } else if (line.indexOf('SSID') === 0) {
             network.ssid = line.match(/SSID: (.*)/)[1];
