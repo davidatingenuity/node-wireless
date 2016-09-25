@@ -385,32 +385,33 @@ Wireless.prototype._executeTrackConnection = function() {
         var content = stdout.toString();
         var lines = content.split(/\r\n|\r|\n/);
         var foundOutWereConnected = false;
-        var networkAddress = null;
+        var networkJoined = {};
 
-        _.each(lines, function(line) {
-            if (line.indexOf('SSID') !== -1) {
-                networkAddress = line.match(/SSID: ([a-fA-F0-9:]*)/)[1] || null;
-
-                if (networkAddress) {
-                    foundOutWereConnected = true;
+        if (lines[0].indexOf('Connected to ') !== -1) {
+            foundOutWereConnected = true;
+            _.each(lines, function(line) {
+                if (line.indexOf('Connected to ') !== -1) {
+                    networkJoined.address = line.match(/Connected to ([a-fA-F0-9:]*)/)[1] || null;
+                } else if (line.indexOf('SSID') !== -1) {
+                    networkJoined.ssid = line.match(/SSID: (.*)/)[1] || null;
                 }
-            }
-        });
-
+            });
+        }
+        
         // guess we're not connected after all
         if (!foundOutWereConnected && self.connected) {
             self.connected = false;
             self.emit('leave');
         } else if (foundOutWereConnected && !self.connected) {
             self.connected = true;
-            var network = self.networks[networkAddress];
+            var network = self.networks[networkJoined.address];
 
             if (network) {
                 self.emit('join', network);
                 return;
             }
 
-            self.emit('former', networkAddress);
+            self.emit('former', networkJoined);
         }
     });
 };
