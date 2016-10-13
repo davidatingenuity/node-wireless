@@ -283,19 +283,25 @@ Wireless.prototype._parseScan = function(scanResults) {
                 encryption_wpa: false,
                 encryption_wpa2: false,
             };
-            var m = line.match(/([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}/);
-            if(m.length > 0) network.address = m[0];
+            var matches = line.match(/([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}/);
+            if(matches.length > 0) network.address = matches[0];
         } else {
             line = line.replace(/^\s+/g,"");
             if (line.indexOf('DS Parameter set: channel ') === 0) {
-                network.channel = line.match(/DS Parameter set: channel ([0-9]{1,2})/)[1];
+                var matches = line.match(/DS Parameter set: channel ([0-9]{1,2})/);
+                if(matches && matches.length > 1) {
+                    network.channel = matches[1];
+                }
             } else if (line.indexOf('signal:') === 0) {
-                var sMatch = line.match(/signal: (\d+)[^\d]/);
-                if (sMatch && sMatch.length >= 2) {
+                var matches = line.match(/signal: (\d+)[^\d]/);
+                if (matches && matches.length >= 2) {
                     network.signal = parseInt(sMatch[1], 10);
                 }
             } else if (line.indexOf('SSID') === 0) {
-                network.ssid = line.match(/SSID: (.*)/)[1];
+                var matches = line.match(/SSID: (.*)/);
+                if(matches && matches.length > 1) {
+                    network.ssid = matches[1];
+                }
             } else if (line.indexOf('RSN:') === 0) {
                 network.encryption_any = true;
                 network.encryption_wep = false;
@@ -391,9 +397,15 @@ Wireless.prototype._executeTrackConnection = function() {
             foundOutWereConnected = true;
             _.each(lines, function(line) {
                 if (line.indexOf('Connected to ') !== -1) {
-                    networkJoined.address = line.match(/Connected to ([a-fA-F0-9:]*)/)[1] || null;
+                    var matches = line.match(/Connected to ([a-fA-F0-9:]*)/);
+                    if(matches && matches.length > 1) {
+                        networkJoined.address = matches[1] || null;
+                    }
                 } else if (line.indexOf('SSID') !== -1) {
-                    networkJoined.ssid = line.match(/SSID: (.*)/)[1] || null;
+                    var matches = line.match(/SSID: (.*)/);
+                    if(matches && matches.length > 1) {
+                        networkJoined.ssid = matches[1] || null;
+                    }
                 }
             });
         }
