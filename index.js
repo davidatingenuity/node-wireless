@@ -25,10 +25,10 @@ var Wireless = function(config) {
     this.iface = config.iface || 'wlan0';
 
     // How often to poll the listing of networks
-    this.updateFrequency = config.updateFrequency || 10;
+    this.updateFrequency = config.updateFrequency || 20;
 
     // How often should we check if we're connected to a network? (this is a pretty fast operation)
-    this.connectionSpyFrequency = config.connectionSpyFrequency || 2;
+    this.connectionSpyFrequency = config.connectionSpyFrequency || 5;
 
     // How many scans should an AP not be in the results before we consider it vanished
     this.vanishThreshold = config.vanishThreshold || 2;
