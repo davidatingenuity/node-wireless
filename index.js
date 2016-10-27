@@ -53,7 +53,7 @@ Wireless.prototype.COMMANDS = {
     interfaces: 'sudo iw dev',
     dhcp: 'sudo dhclient :INTERFACE',
     dhcp_disable: 'dhclient -r :INTERFACE; sudo killall dhclient',
-    leave: 'sudo killall wpa_supplicant; sudo iwconfig :INTERFACE essid ""',
+    leave: 'sudo killall wpa_supplicant',
 
     metric: 'sudo ifconfig :INTERFACE metric :METRIC',
     connect_wep: 'sudo iw :INTERFACE connect ":ESSID" keys :PASSWORD',
@@ -216,13 +216,13 @@ Wireless.prototype.disable = function(callback) {
 
     exec(this.commands.disable, function(err, stdout, stderr) {
         if (err) {
-            this.emit('error', "There was an unknown error disabling the interface" + err);
+            self.emit('error', "There was an unknown error disabling the interface" + err);
             callback && callback(err);
             return;
         }
 
         if (stdout || stderr) {
-            this.emit('error', "There was an error disabling the interface" + stdout + stderr);
+            self.emit('error', "There was an error disabling the interface" + stdout + stderr);
             callback && callback(stdout || stderr);
             return;
         }
