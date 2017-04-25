@@ -346,7 +346,7 @@ Wireless.prototype._executeScan = function(cmd) {
                 return;
             }
 
-            self.emit('error', "Got some major errors from our scan command:" + err);
+            self.emit('error', "Got some major errors from our scan command (" + scanCommand + "):" + err);
             // TODO: Destroy
             return;
         }
