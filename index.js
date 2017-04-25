@@ -241,6 +241,7 @@ Wireless.prototype.disable = function(callback) {
 Wireless.prototype.join = function(network, password, callback) {
     var self = this;
     var cb = function() {
+        self.connected = false;
         self._executeTrackConnection(function(){
             return callback && callback();
         });
@@ -400,7 +401,7 @@ Wireless.prototype._executeTrackConnection = function(callback) {
 
     exec(this.commands.stat, function(err, stdout, stderr) {
         if (err) {
-            self.emit('error', "Error getting wireless devices information", err);
+            self.emit('error', "Error getting wireless devices information (" + self.commands.stat + ")", err);
             // TODO: Destroy
             return callback && callback();
         }
