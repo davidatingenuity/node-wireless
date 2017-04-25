@@ -40,7 +40,7 @@ var Wireless = function(config) {
     for (var command in this.commands) {
         this.commands[command] = this._translate(this.commands[command], {
             'interface': this.iface,
-            'interface2': this.iface2,
+            'interfaceb': this.iface2,
         });
     }
 };
@@ -49,7 +49,7 @@ util.inherits(Wireless, EventEmitter);
 
 Wireless.prototype.COMMANDS = {
     scan: 'sudo iw dev :INTERFACE scan',
-    scan2: 'sudo iw dev :INTERFACE2 scan',
+    scan2: 'sudo iw dev :INTERFACEB scan',
     stat: 'sudo iw dev :INTERFACE link',
     disable: 'sudo ifconfig :INTERFACE down',
     enable: 'sudo ifconfig :INTERFACE up',
