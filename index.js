@@ -239,12 +239,18 @@ Wireless.prototype.disable = function(callback) {
 
 // Attempts to connect to the specified network
 Wireless.prototype.join = function(network, password, callback) {
+    var self = this;
+    var cb = function() {
+        self._executeTrackConnection(function(){
+            return callback && callback();
+        }
+    }
     if (network.encryption_wep) {
-        this._executeConnectWEP(network.ssid, password, callback);
+        this._executeConnectWEP(network.ssid, password, cb);
     } else if (network.encryption_wpa || network.encryption_wpa2) {
-        this._executeConnectWPA(network.ssid, password, callback);
+        this._executeConnectWPA(network.ssid, password, cb);
     } else {
-        this._executeConnectOPEN(network.ssid, callback);
+        this._executeConnectOPEN(network.ssid, cb);
     }
 };
 
@@ -254,13 +260,15 @@ Wireless.prototype.leave = function(callback) {
 
     this.emit('command', this.commands.leave);
     exec(this.commands.leave, function(err, stdout, stderr) {
-        if (err) {
-            self.emit('error', "There was an error when we tried to disconnect from the network");
-            callback && callback(err);
-            return;
-        }
+        self._executeTrackConnection(function(){
+            if (err) {
+                self.emit('error', "There was an error when we tried to disconnect from the network");
+                callback && callback(err);
+                return;
+            }
 
-        callback && callback(null);
+            callback && callback(null);
+        );
     });
 };
 
@@ -385,7 +393,7 @@ Wireless.prototype._executeScan = function(cmd) {
 };
 
 // Checks to see if we are connected to a wireless network and have an IP address
-Wireless.prototype._executeTrackConnection = function() {
+Wireless.prototype._executeTrackConnection = function(callback) {
     var self = this;
 
     this.emit('command', this.commands.stat);
@@ -394,7 +402,7 @@ Wireless.prototype._executeTrackConnection = function() {
         if (err) {
             self.emit('error', "Error getting wireless devices information", err);
             // TODO: Destroy
-            return;
+            return callback && callback();
         }
 
         var content = stdout.toString();
@@ -429,11 +437,12 @@ Wireless.prototype._executeTrackConnection = function() {
 
             if (network) {
                 self.emit('join', network);
-                return;
+                return callback && callback();
             }
 
             self.emit('former', networkJoined);
         }
+        return callback && callback();
     });
 };
 
