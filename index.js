@@ -354,9 +354,12 @@ Wireless.prototype._executeScan = function(cmd) {
                 // Of course we got an error the main app is being killed, taking iwlist down with it
                 return;
             }
-
-            self.emit('error', "Got some major errors from our scan command (" + scanCommand + "):" + err);
-            // TODO: Destroy
+            if(err == -16) {
+                if(!cmd) return self._executeScan(self.commands.scan2);
+            } else {
+                self.emit('error', "Got some major errors from our scan command (" + scanCommand + "):" + err);
+                // TODO: Destroy
+            }
             return;
         }
 
