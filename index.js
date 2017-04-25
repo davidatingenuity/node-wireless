@@ -365,7 +365,7 @@ Wireless.prototype._executeScan = function(cmd) {
 
         if (!stdout) {
             return;
-        } else if (stdout.match(/scan aborted!/)) {
+        } else if (stdout.match(/scan aborted/i)) {
             if(!cmd) return self._executeScan(self.commands.scan2);
             return;
         }
