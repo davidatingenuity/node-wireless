@@ -243,7 +243,7 @@ Wireless.prototype.join = function(network, password, callback) {
     var cb = function() {
         self._executeTrackConnection(function(){
             return callback && callback();
-        }
+        });
     }
     if (network.encryption_wep) {
         this._executeConnectWEP(network.ssid, password, cb);
@@ -268,7 +268,7 @@ Wireless.prototype.leave = function(callback) {
             }
 
             callback && callback(null);
-        );
+        });
     });
 };
 
