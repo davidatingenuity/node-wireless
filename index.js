@@ -23,7 +23,7 @@ var Wireless = function(config) {
 
     // Interface to listen on. TODO: handle multiple
     this.iface = config.iface || 'wlan0';
-    this.iface2 = config.iface2 || 'wlan1';
+    this.iface2 = config.iface2 || false;
 
     // How often to poll the listing of networks
     this.updateFrequency = config.updateFrequency || 60;
@@ -355,7 +355,7 @@ Wireless.prototype._executeScan = function(cmd) {
                 return;
             }
             if(err == -16) {
-                if(!cmd) return self._executeScan(self.commands.scan2);
+                if(!cmd && this.iface2) return self._executeScan(self.commands.scan2);
             } else {
                 self.emit('error', "Got some major errors from our scan command (" + scanCommand + "):" + err);
                 // TODO: Destroy
@@ -378,7 +378,7 @@ Wireless.prototype._executeScan = function(cmd) {
         if (!stdout) {
             return;
         } else if (stdout.match(/scan aborted/i)) {
-            if(!cmd) return self._executeScan(self.commands.scan2);
+            if(!cmd && this.iface2) return self._executeScan(self.commands.scan2);
             return;
         }
 
